@@ -1,0 +1,100 @@
+2.webpack：模块化管理和打包工具
+  具体使用方法如下：
+1>创建项目：                  mkdir sms 
+cd sms              
+2>初始化得到package.json：  npm  init -y
+3>创建目录：                  mkdir src dist
+4>安装webpack：              npm install --save-dev webpack
+5>安装jquery:                npm install --save jquery 
+6>安装babel相关的：        npm install --save-dev babel-core 
+babel-preset-env babel-loader
+
+    7>样式相关的：  npm install --save-dev css-loader style-loader 
+    8>           npm install --save-dev file-loader
+    9>编辑package.json：
+         添加一行代码：”build”:”webpack”
+    10>要想babel生效，必须在根目录下(sms)编写.babelrc文件：
+         {“presets”:[“env”]}
+11> 在根目录(sms)下编写webpack.config.js
+       const webpack=require(‘webpack’)
+   const HtmlWebpackPlugin=require(‘html-webpack-plugin’)
+module.exports={
+    entry:'./src/app.js',      //入口文件
+    output:{                  //出口文件
+       path:__dirname+'/dist',
+       filename:'app.bundle.js'
+    }，
+    devServer:{
+       contentBase:’./dist’
+},
+    //配置加载器             
+               module:{
+                   loaders:[{
+                       test:/\.js$/,
+                       exclude:/node_modules/,
+                       loader:'babel-loader'
+                    },{
+                       test:/\.css$/,
+                       loaders:[‘css-loader’,’style-loader’]
+},{
+ test:/\.(png|jpg)$/,
+ loader:’file-loader’
+}]
+},
+//代码的压缩（插件的配置）
+plugins:[
+  new webpack.optimize.UglifyJsPlugin({
+    output:{comments:false}
+}),
+new HtmlWebpackPlugin({
+  template:’src/app.htnl’
+})
+]
+} 
+      12>  npm install --save-dev html-webpack-plugin
+           (Eg:html-webpack-plugin可以自动创建html文件)
+      13>代码的编写：在src下新建app.js
+            import $ from ‘jquery’
+
+            $(‘body’).text(‘hello world’)
+       14>使用webpack-dev-server(简单的web服务器，在代码修改后能重新构建代码并且刷新浏览器)
+          npm install --save-dev webpack-dev-server
+      
+          只能用于开发做测试，不能实际应用
+       15>将webpack-dev-server集成到webpack，即在
+webpack.config.js中编写代码:
+
+     devServer:{
+       contentBase:’./dist’
+},
+
+       16>启动项目需要在package.json中编写：
+           “start”:”webpack-dev-server --open”
+       17>npm run start 启动项目
+       18>在webpack.config.js下编写代码：
+new HtmlWebpackPlugin({
+  template:’src/app.html’
+})
+       19>在src下新建app.html
+
+
+3.使用vue-cli搭建大型单页面应用：
+Vue init webpack app
+
+项目名称是app吗？       yes
+项目描述是...吗？        yes
+作者是...吗？            yes
+使用vue-router吗？     yes
+使用ESlint约束代码吗？  no
+使用...做集成测试吗？     no
+使用e2e做测试吗？        no
+项目搭建完成
+进入app,然后安装所有依赖 npm  install  
+最后运行：npm run dev （即可在浏览器页面显示vue.js）
+如需要在sublime对vue文件高亮显示，则需要安装插件；
+
+4.使用
+        app.js
+
+          import background './images/background.png'
+          $(img).attr(src,background)

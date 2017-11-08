@@ -1,0 +1,9 @@
+//用于测试，路由
+class User{
+    constructor(id,name,pass){
+        this.id=id;
+        this.name=name;
+        this.pass=pass;
+    }
+}
+module.exports=User;

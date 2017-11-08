@@ -1,0 +1,539 @@
+mysql特点（c c++所写）
+Mysql数据库是目前最为流行的开源关系型数据库
+Mysql是一个数据库管理系统
+Mysql数据库是关系型的
+Mysql软件是开源的（免费）
+Mysql数据库是非常高效的，可靠的，可扩展的，易于使用的
+Mysql服务器可以工作在客户端，服务器端，或者嵌入到系统中
+Mysql用户管理
+
+查询语句特点
+    1.查询语句由sql和;组成
+2.Mysql终端将sql语句发送到mysql服务器中执行，随后将查询结果返回进行显示
+3.Sql语句是大小写不敏感的
+4.Sql语句可以分多行书写，知道输入;表示sql的结束，如果放弃查询，请输入\c
+
+
+地址：
+1.mac地址（硬件地址）：嵌入在网卡中的地址，不能变
+2.IP（网络地址，软件地址）地址：根据路由变，由路由分配ip地址
+eg:现在本机上打开了一台虚拟机，就是在虚拟机与本机之间链接了一个虚拟路由器，路由器给本机和虚拟机分别分配了一个地址，在终端中可以使用ifconfig查询本地IP地址，
+
+本机登录与远程登录：利用终端打开并操纵软件
+     1.本地登录：登陆所在主机和服务所在主机为一台主机
+     2.远程登录：mac终端中登陆Ubuntu中安装的MySQL服务
+    本地登录1：mysql -uroot -p:进入mysql（-u:user用户，-p:password密码，密码可写可不写，最好不写，以防泄露），输入密码，即可进入mysql
+本地登录2：mysql -h127.0.0.1 -uroot -p:也可以进入mysql，(-h:远程主机名，127.0.0.1：本机，ifconfig可以查看地址),输入密码，即可进入mysql
+3.\q或者exit或者quit：退出
+4.\c:	取消正在执行命令
+4.远程登录：mysql -hhost -uroot -p,输入密码，即可进入mysql;
+默认情况下，远程mysql服务不允许使用root进行远程登录:
+1.设置首先在本地登录mysql（mysql -uroot -p）
+2.查看所有的数据库DBMS实例(mysql>show databases;)
+3.切换到mysql数据库中（mysql>use mysql;）
+4.查看mysql数据库中所有表（mysql>show tables;）
+5.查看user表中所有的用户（mysql>selsct user,host from user;）
+6.查询user表结构（mysql>desc user 或者 describe user）
+7.更改root用户的host列，使其支持远程登录（mysql>update user set host=’%’ where user=’root’）(%:远程，本地都可登录，没有限制)
+8.从mysql命令行退出，使用service mysql restart重启，即可远程登录
+
+MySQL中的函数：
+select now( ); ：打印当前时间
+select sum(1+2)；：计算
+selcet version( )；：查看当前ubuntu版本
+         ......
+官方手册：https://dev.mysql.com/doc/refman/5.7/en/
+
+sql与mysql /oracle
+   sql:标准化查询语言（任何数据库都要以此为标准）
+      功能：1.DDL(数据库定义语言)
+               create  alter  drop
+            2.DML(数据库修改语言)分为:
+1.query数据库查询
+   以select开头的
+2.update数据库更新
+         insert delect update
+   mysql/oracle:数据库管理语言，可以解析sql语言（除了可以输入sql语言，还可以输入数据库设置语言，比如：创建用户）
+
+终端提示符 
+1.mysql> 最常见，后接命令
+2.-> :没有封号
+
+3.’> ： ’缺失
+
+4.”>
+5./*>
+创建用户
+  1.mysql> create user ‘admin’@’localhost’ identified by ‘terry’
+	2.mysql> create user ‘customer’@’%’ identified by ‘terry’
+(create user:用户名   @：权限，不写默认是% identified by ：密码） 
+  eg: create user ‘admin’ indentified by ‘admin’;
+
+
+授权
+1.授所有权限
+	    mysql> grant all privileges  on *.* to ’admin‘@’localhost‘ width grant option
+2.授部分权限
+mysql>grant select,insert,update,delete,create,drop 
+		>on customer.*
+		>to ’customer'@’%’
+
+删除用户账户
+	mysql> drop user ’admin'@'localhost'
+
+
+修改账号密码
+	1.mysql> create user ‘terry’@’localhost’ identified by ‘pass’;
+	2.mysql> alter user ‘terry’@’localhost’ identified by ‘newpass’;	
+	#当前用户也可以修改自己的密码
+	 mysql> alter user user() identified by ‘newpass’;
+
+
+                 第二天
+复习第一天
+1. mysql的理解
+2. 安装：apt-get install
+3. 配置：/etc/my.cnf 配置编码方式
+或者/etc/mysql/my.cnf
+4. 服务： service mysql start（开启），status（查看）,stop（停止）,restart（重启）
+5. 登录
+    1) 本地登录：登录所在主机和服务所在主机为一台主机
+        eg:ubuntu 终端中登录ubuntu中安装的mysql服务
+        $ mysql -uroot -p 
+    2) 远程登录：mac终端中登录ubuntu中安装的mysql服务
+        $ mysql -hIP -uroot -p
+  注：登录的用户必须支持远程登录（mysql.user中的host最好为％
+６. 简单使用
+    mysql> 写命令
+    命令格式：　主要由sql组成，以;结尾，点击回车后终止输入，如果没有以；结尾，就会出现终端提示符
+7. 命令中的查询函数
+    mysql> select mysql内置函数;
+  内置函数：
+        sum(1+1):相加
+        sin( )：正弦
+        now( )：时间
+        version( );当前版本号        
+user( );当前所在用户
+8. 用户管理：mysql.user
+    1) 添加用户
+        create user 'username'@'host' identified by 'password'
+    2）修改密码
+        alter user 'username'@'host' identified by 'password'       
+    3) 删除用户
+        drop user 'username'@'host'
+9.权限管理
+grant 权限　on 数据库.表　to 用户
+
+数据库定义
+    １.创建数据库：数据库只需要创建一次，每次登录MySQL时候需要使用use选中需要操作的数据库
+        create database 数据库名
+    ２.切换数据库
+        use 数据库名
+    3 .查看所有数据库
+        show databases
+    4 .删除数据库
+        drop 数据库名 eg:drop database test01
+
+查看数据库中的所有表：show tables
+展示某个表：desc 表名
+插入命令：insert into student value(条件eg:1， null， null， null:id不能为空)
+查看表中所有的列：select * from student;
+数据库表定义
+ １) 创建数据库表
+        create table 表名(
+            列名1　数据类型　[约束],
+            列名2　数据类型　[约束],
+            [约束]
+        );
+数据类型
+   １．数字类型
+      INT
+      float
+      double
+   2. 字符类型
+      varchar(5)  'var'
+      char(5)     'var  '
+      text    文本类型
+  ３. 日期类型
+      date    年-月-日 96-03-01
+      datetime年-月-日 时:分:秒 96-03-01 14:47:32
+约束条件
+１．主键约束(primary key )
+      eg:id INT primary key
+      特点：非空，不能重复,不参与业务逻辑运算的
+      主键由主键生产机制产生
+         eg: 学生信息
+          id  学号　姓名　性别　住址 
+           1  101  terry  男　  山西　
+           2  102  larry  男　 山西
+           3  101  terry  男　 山西
+2. 外键约束foreign key() references table.column
+     参照另外一张表主键的键被成为是外键
+     可以为空,如果不为空，它一定对应一条数据
+ eg:手机信息
+id  型号　     颜色      手机号     外键
+1　 iphone6   土豪金　18812344321    １
+2   iphone6   土豪金　18812344322    ３  
+3   iphone6   土豪金　18812344323    ２
+笛卡尔积（等值连接　手机外键＝学生主键）
+３. 唯一约束:unique
+eg:丈夫
+  id name age
+  1  terry 28
+  2  larry 26
+  3  tom   31
+  4  jacky 3
+5  wood  29
+   妻子
+id name age  hasband_id(unique)
+  1  vicky 22      1
+  2  lucy  25     ２
+４．非空约束　not null不能为空
+５．检查约束check
+        eg:男　　女
+  
+   create table student(
+        id INT(6) primary key , //int最好不加（）
+        name varchar(20),
+        gender char(1),
+        birth date 
+    );
+
+  2) 修改表结构
+        添加：alter table 表名　add column 列定义
+        删除：alter table 表名　drop column
+        修改：alter table 表名　modify column 列定义
+        truncate student;删除一个表中所有的数据，结构还在
+
+表关系：关系主要是由外键体现的
+    １. 一对多关系：外键维护在多的一方。
+     教师teacher
+        id　name     telephone   
+        1   张老师　　1881234431
+        2   刘老师　　1881234432
+        3   张老师　　1881234433
+     班级class
+        id    name      date   teacher_id    
+        1   web1701   17-07-01     1
+        2   web1702   17-07-01     2
+     学生student
+        id  name    gender  birth       class_id   
+        1   terry   男       96-03-01        1
+        2   larry   男       96-03-01        1
+        3   tom     男       96-03-01        2
+    2. 一对一关系：是一对多关系的特例（外键　唯一约束），外键维护在任意一方（从方）
+           eg: hasband    wife
+    3. 多对多关系:也是一对多关系的特例（两个一对多就组成了多对多）
+     student     
+        id   name     gender
+         1   terry     male
+         2   larry     male
+         3   tom       male
+     studentCourse
+        id  student_id  course_id   grade   
+        1       1           1       78
+        2       1           2       81
+        3       2           1       88
+     course
+        id  name    credit
+        1   java    4
+        2   c       2
+        3   css     2
+
+
+--------------------------------------------------------------------------
+
+              第三天
+第二天复习
+1. 数据库的定义
+	1) 数据库创建
+		create database 数据库名
+	2) 数据库的删除
+		drop database 数据库名
+
+2. 数据库表的定义
+	1） 表的创建
+		create table 表名(
+			列名1 数据类型 [约束],
+			...
+		);
+	2) 表的修改
+		alter table 表名 add column 列名 数据类型 [约束]
+		alter table 表名 drop column 列名 数据类型 [约束]
+		alter table 表名 modify column 列名 数据类型 [约束]
+	3) 表的删除
+		drop table 表名
+	4) 表中数据的清空
+		truncate 表名
+
+	数据类型
+		数字类型
+			INT
+			DOUBLE
+		字符类型
+			VARCHAR()
+			CHAR()
+			TEXT
+		日期类型
+			DATE
+			DATETIME
+	约束
+		主键
+			PRIMARY KEY
+			唯一不重复
+
+		外键
+			FOREIGN KEY(student_id) REFERENCES student(id)
+			必须参照一个存在的记录
+
+		非空
+			NOT NULL(NN)
+
+		唯一约束
+			UNIQUE	(UN)
+
+		检查约束
+			CHECK
+
+3. 数据库表的关系(外键)
+	1)	一对一
+		外键维护在任意一方，但是外键唯一
+	2)	一对多
+		外键维护在多的一方
+	3)	多对多
+		外面维护在桥表中
+
+----------------------------------------------------
+CRUD 增删改查
+insert
+	insert into 表名[(列1,列2...)] values(值1,值2...);
+	如果没有指定列名，values中的值必须与表结构中的列一一对应
+	如果指定了列明，valeus中的值必须和指定列一一对应
+
+delete
+	delete from 表名 where子句 
+	delete from student where gender = '男';
+
+update 
+	update 表名 set 列名1=值1,列名2=值2 where子句
+	employees(id,name,salary)
+		update employees set salary = 6000
+		where name = '张三'
+
+select
+	select [all\distinct] 列名
+	from 表名1 as a1, 表名2 as a2
+	where 
+	group by
+	having
+	order by
+
+
+
+node.js
+StudentAPI								负责与mysql交互
+var sql = "select * from student";
+mysql.execute(sql,{},function(data){
+	console.log(data);
+});
+
+http.get('/students',function(){
+									负责接收浏览器请求，调用api,将查询结果返回
+	StudentAPI.getAllStudents();
+	resp.send(students);
+});
+
+
+前端							
+									负责接收用户的交互，转换为代码的请求
+jquery 对dom 
+	节点树
+		Node
+			
+		Document Element Comment Text
+		HTMLDocument	HTMLElement
+	事件
+		
+		兼容性问题！！！
+	显示所有的学生信息
+		id name gender birth
+
+		$.get('/students',function(data){
+			显示到页面中
+		});
+
+category
+	id 	name 	parent_id
+	1	国内新闻
+	2 	国外新闻
+	3 	体育新闻		1
+	4	娱乐新闻		1
+
+
+数据模拟
+	1. 开班（向class表中插入班级信息）
+		insert into clazz values(null,'web1701','17-7-1',null);
+		insert into clazz(name,createDate) values('web1702','17-7-1');
+		insert into clazz(name,createDate) values('jd1701','17-7-1');
+		insert into clazz(name,createDate) values('jd1702','17-7-1');
+		insert into clazz(name,createDate) values('jd1703','17-7-1');
+	2. 招聘班主任
+		insert into teacher values(null,'terry','18812344321');
+		insert into teacher values(null,'larry','18812344322');
+		insert into teacher values(null,'tom','18812344323');
+		insert into teacher values(null,'jacky','18812344324');
+	4. 为班主任分班
+		update clazz set teacher_id = 2 where id = 2
+		update clazz set teacher_id = 3 where id = 3;
+		update clazz set teacher_id = 4 where id = 4;
+		update clazz set teacher_id = 4 where id = 5;
+	5. 查看每个老师负责的班级
+		select t.name,c.name
+		from clazz as c,teacher as t
+		where c.teacher_id = t.id;
+		=>
+		select t.name,c.name
+		from clazz as c join teacher as t
+		on c.teacher_id = t.id;
+	6. 准备课程体系
+		insert into course values(null,'Java',4);
+		insert into course values(null,'unix',2);
+		insert into course values(null,'html',2);
+		insert into course values(null,'css',3);
+		insert into course values(null,'Javascript',4);
+		insert into course values(null,'mysql',3);
+		insert into course values(null,'node',3);
+	7. 学生报到
+		insert into student values(null,'张三','男','96-3-1',1);
+		insert into student values(null,'李四','男','96-4-2',1);
+		insert into student values(null,'王五','男','92-9-1',1);
+		insert into student values(null,'赵六','男','94-1-4',1);
+		insert into student values(null,'薛七','女','96-2-1',2);
+		insert into student values(null,'刘八','男','98-3-3',2);
+	8. 学生选课
+		insert into studentCourse values(null,null,1,1);
+		insert into studentCourse values(null,null,1,2);
+		insert into studentCourse values(null,null,1,3);
+		insert into studentCourse values(null,null,1,4);
+		insert into studentCourse values(null,null,1,5);
+		insert into studentCourse values(null,null,1,6);
+		insert into studentCourse values(null,null,1,7);
+		insert into studentCourse values(null,null,2,1);
+		insert into studentCourse values(null,null,2,2);
+		insert into studentCourse values(null,null,2,3);
+		insert into studentCourse values(null,null,2,4);
+		insert into studentCourse values(null,null,2,5);
+		insert into studentCourse values(null,null,3,1);
+		insert into studentCourse values(null,null,3,2);
+		insert into studentCourse values(null,null,3,3);
+		insert into studentCourse values(null,null,3,4);
+
+	9. 查询选修了Java课程的学生有哪些
+		course studentCourse student
+
+		select s.name, c.name
+		from course as c,studentCourse as sc,student as s
+		where sc.student_id = s.id
+		and sc.course_id = c.id
+		and c.name = 'mysql';
+
+	10. 查询课程的学分有几种
+		select distinct credit from course;
+	11. where子句
+		=
+		<>
+		>
+		>=
+		<
+		<=
+		like	模糊查询 Java
+		between	and
+		in(集合)
+		and
+		or
+
+		1) 查询所有课程名称以J开头的课程
+			select * from course where name like 'J%'
+		2) 查询所有课程名称中包含m的课程
+			select * from course where name like '%m%'
+		3) 查询出生日期在93-1-1 ~ 94-12-31出生的所有学生
+			select * 
+			from student 
+			where birth between '93-01-01' and '94-12-31'
+
+		4) 查询在95-1-1之前出生的所有的男学生
+			select * 
+			from student
+			where birth < '95-01-01'
+			and gender = '男';
+		5) 查询出学分为2,3的所有课程信息
+			select * 
+			from course
+			where credit in (2,3);
+
+		6) 查询出学分小于所有课程平均学分的课程
+	12. 分组查询
+		group by是分组查询，将结果集按照某一规则进行细分。一般与聚集函数一同使用
+
+		1) 聚集函数
+			count()	统计数量
+			avg()	平均分
+			max()	最大
+			min()	最小
+
+			1. 查询出学生表中女生的数量
+				select count(*)
+				from student
+				where gender = '女';
+			2. 查询出年龄最小的学生信息
+				select * 
+				from student
+				where birth = (
+					select max(birth)
+					from student
+				);
+		2) group by
+			1. 模拟考试
+
+			2. 查询出张三同学所有选修课的平均分
+				select s.name ,avg(sc.grade)
+				from student as s,studentCourse as sc ,course as c
+				where s.id = sc.student_id
+				and c.id = sc.course_id	#查看到每个学生的选修关系
+				and s.name = '张三';
+				#筛选出张三同学的选修关系
+
+				=》
+
+				select s.name ,avg(sc.grade)
+				from student as s,studentCourse as sc ,course as c
+				where s.id = sc.student_id
+				and c.id = sc.course_id	
+				group by s.name
+				having s.name = '张三';
+			3. 筛选出张三同学选修课成绩低于他自己所有选修课平均分的课程???
+	13. 排序
+		一般用于sql语句的最后，根据某一列进行排序，默认是升序排列
+		order by 列名 desc/asc
+
+	14. 连接查询
+		左外连接查询
+			left outer join
+			查询出班主任和班级之间的所有关系，并且保留所有的班主任
+
+			select t.name,c.name
+			from teacher as t ,clazz as c
+			where c.teacher_id = t.id;
+			=>
+			select t.name,c.name
+			from teacher as t left outer join clazz as c
+			on c.teacher_id = t.id;
+
+
+		右外连接查询
+			right outer join	
+
+			select t.name,c.name
+			from teacher as t right outer join clazz as c
+			on c.teacher_id = t.id;	
+				

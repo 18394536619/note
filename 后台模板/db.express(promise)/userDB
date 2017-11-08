@@ -1,0 +1,38 @@
+let pool=require('./pool');//加载连接池
+//实现各种功能
+module.exports={
+    //查找所有
+    findAll(){
+        var sql='select * from user';
+        return pool.execute(sql);
+    },//各功能之间必须用‘，’隔开
+    //通过ID查询
+    findById(id){
+        var sql='select * from user where id='+id;
+        console.log(sql);
+        return pool.execute(sql);
+    },
+    //保存
+    save(user){
+        var sql='insert into user values(null,"'+user.name+'",'+user.pass+')';
+        return pool.execute(sql);
+    },
+    //修改
+    update(user){
+        var sql='update user set name="'+user.name+'",pass="'+user.pass+'" where id='+user.id;
+        console.log(sql);
+        return pool.execute(sql);
+    },
+    //删除
+    batchDelete(ids){
+        var sql='delete from user where id in ('+ids.join()+')';
+        return pool.execute(sql);
+    },
+
+//通过关键字查询
+    query(keys){
+      var sql = 'select * from User where name like "%'
+        +keys+'%"';
+      return pool.execute(sql);
+    }
+}

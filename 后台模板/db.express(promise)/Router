@@ -1,0 +1,56 @@
+let express=require('express');
+let route=express.Router();
+
+let User=require('../model/User');
+let userDB=require('../db/userDB');
+
+
+route.get('/findAll',(req,resp)=>{//get前台提交方式
+    userDB.findAll().then(function(data){//获取后台数据并提交到前端
+        resp.send(data);
+    }).catch(function(error){
+        resp.send(error);
+    });
+});
+route.get('/findById',function(req,resp){//req请求，resp响应
+    userDB.findById(req.query.id).then(function(data){//获取需查询的ID 号
+        resp.send(data);
+    }).catch(function(error){
+        resp.send(error);
+    });
+});
+//保存。修改一般为post
+route.post('/save',function(req,resp){
+    let user=new User();
+    Object.assign(user,req.body);//将前台属性合并到User中
+    userDB.save(user).then(function(result){
+        resp.send(result);
+    }).catch(function(error){
+        resp.send(error);
+    });
+});
+route.post('/update',function(req,resp){
+    let user=new User();
+    Object.assign(user,req.body);
+    userDB.update(user).then(function(result){
+        resp.send(result);
+    }).catch(function(error){
+        resp.send(error);
+    });
+});
+route.post('/batchaDelete',function(req,resp){
+    userDB.batchDelete(req.body).then(function(result){
+        resp.send(result);
+    }).catch(function(error){
+        resp.send(error);
+    });
+});
+//模糊查询
+route.get('/query/:keys',(req,resp)=>{
+  studentDB.query(req.params.keys).then((data)=>{
+    resp.send(data);
+  }).catch((error)=>{
+    resp.send(err);
+  });
+})
+module.exports=route;

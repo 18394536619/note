@@ -1,0 +1,52 @@
+//创建链接池
+let mysql=require('mysql');
+let pool=global.pool;
+if(!pool){//判断全局中是否有链接池，如没有，创建连接池
+    //创建链接池
+    pool=mysql.createPool({
+        database:'project',
+        user:'root',
+        password:'root',
+    });
+    //将连接挂到global上
+    global.pool=pool;
+}
+//获取链接
+function getConnection(){
+    return new Promise(function(resolve,reject){
+        pool.getConnection(function(err,connection){
+            if(!err){
+                resolve(connection);
+            }else{
+                reject(err);
+            }
+        });
+    });
+}
+//执行sql
+function execute(sql){
+    return new Promise(function(resolve,reject){
+        var conn;//全局变量，用于释放链接池
+       getConnection().then(function(connection){
+           conn=connection;
+           connection.query(sql,function(err,result){
+               if(!err){
+                   resolve(result);
+               }else{
+                   reject(err);//将错误返回前端
+               }
+           });
+       }).catch(function(err){
+           reject(err);
+       }).finally(function(){//始终执行的语句
+           if(conn){
+                conn.release();//释放连接池
+                console.log("释放完成");
+           }          
+       });
+    });
+}
+module.exports={
+    getConnection,
+    execute
+}

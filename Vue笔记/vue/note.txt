@@ -1,0 +1,592 @@
+vue
+1. 什么是vue
+    vue是前端开发框架。
+    数据驱动模式
+    响应式的数据渲染
+    组件机制
+    自底向上增量开发
+
+2. vue安装
+  1) 直接下载，通过script引入(初学者)
+    vue.min.js
+    vue.js    (开发)
+  2) 直接使用npm进行安装
+    将vue作为一个模块集成到其他项目中
+    npm init -y
+    npm install vue --save
+    ...
+  3) 直接使用vue-cli初始化一个vue+webpack项目
+    vue init webpack app(联网到github中下载模板)
+
+3. helloworld
+  index.html
+
+  <script src='js/vue.js'></script>
+  <body>
+    <div id="app">
+      <h2>{{msg}}</h2>
+    </div>
+  </body>
+  <script>
+    new Vue({
+      el:'#app',
+      data:{
+        msg:'hello world'
+      }
+    })
+  </script>
+
+4. vue生命周期
+    初始化vue实例
+    渲染模板 vue.$el
+    挂载
+    监听（当data中的数据发生了变化，重新渲染）
+    销毁 vue.$destroy
+
+5. 生命周期钩子
+  beforeCreate  //实例初始化之后，事件配置之前
+  created       //实例创建完之后
+  beforeMount   //挂载之前调用
+  mounted       //挂载之后
+  beforeUpdate  //数据更新之前调用
+  updated       //数据更新之后
+  beforeDestroy //销毁前
+  destroyed      //销毁后
+
+6. Vue的实例
+  new Vue({//创建实例
+    el:'#app',//指定当前vue要绑定的dom对象
+    data:{  //提供页面渲染时要用的数据
+
+    },
+    methods:{//提供方法（事件处理函数）
+
+    },
+    computed:{//提供计算属性（处理data数据）
+
+    },
+    components:{//
+
+    },
+    //事件钩子
+    mounted:function(){
+
+    }
+  })
+7. 渲染
+  1) 文本显示,双大括号中可以使用表达式，响应式的渲染
+    
+    {{msg}}
+
+    data:{
+      msg:'hello vue'
+    }
+  2) 循环渲染 v-for
+    <ul>
+      <li v-for='(item,index) in students'>{{item}}</li>
+    </ul>
+
+    data:{
+      students:['terry','larry','tom','jacky']
+    }
+  3) 条件渲染 v-if,v-show
+    v-if 只有满足条件的结果才能被渲染
+    <div v-if=''>one</div>
+    <div v-else-if=''>two</div>
+    <div v-else>three</div>
+
+    v-show 使用visiable动态显示与隐藏
+    <div v-show=''></div>
+
+  4) 属性绑定
+    应用与自定义属性的绑定，在父子组件传值中非常有用
+    v-bind 简写形式 :
+    
+    <div :title='msg'></div>
+    <div title='msg'></div>
+    data:{
+      msg:'hello'
+    }
+
+  5) 事件绑定 
+    v-on 简写形式 @
+    <button @click='handler($event)'>clickMe</button>
+    <button @click='show = !show'>clickMe</button>
+
+    new Vue({
+      data:{
+        show:true
+      },
+      methods:{
+        handler(event){
+          this.show = !this.show;
+        }
+      }
+    })
+
+    1. 参数
+      $event(preventDefault() .target)
+    2. 事件修饰符（适合所有的事件）
+      @click.prevent  //阻止默认行为
+      @click.stop     //阻止冒泡行为
+      @click.self     //仅在当前事件上触发
+      @click.once     //仅触发一次
+    3. 键值修饰符（适合按键相关的事件）
+      @keyup
+      @keydown.enter      
+      @keydown.esc
+      @keydown.delete
+      @keydown.space
+      @keydown.tab
+      ...
+    4. 自定义事件
+  6) 双向数据绑定（应用在表单元素上）
+    <input type="text" v-model='person.name'>
+    
+    <input type="checkbox" v-model='person.hobbies' value='run'>
+    <input type="checkbox" v-model='person.hobbies' value='swimming'>
+    <input type="checkbox" v-model='person.hobbies' value='reading'>
+
+    data:{
+      person:{
+        name:'',
+        hobbies:[]
+      }
+    }
+
+---------
+动画
+  实现
+    css3
+      transition
+      animation
+      animate.css(框架)
+
+    js
+      jquery    $.animate({},{})    （框架）
+      velocity  Velocity(el,{},{})  （框架）
+
+动画技术在vue中的应用
+
+  enter/leave过度效果
+  
+  v-if
+  v-show
+
+  <transition></transition>
+  <transition-group></transition-group>
+
+  1. 使用CSS3技术实现
+    1) 原生CSS3
+      <transition>
+        <div v-if='show'>
+          hello
+        </div>
+      </transition>
+      或
+      <div is='transition'>
+        <div v-if='show'>
+          hello
+        </div>
+      </div>
+
+      <transition>在渲染完毕之后是不存在的，div中会由vue添加一些样式:
+
+      .v-enter
+      .v-enter-to
+      .v-enter-active
+
+      .v-leave
+      .v-leave-to
+      .v-leave-active
+
+    2) 框架 animate.css
+      <transition
+        enter-class=''
+      >
+        <div v-if='show'>
+          hello
+        </div>
+      </transition>
+
+      enter-class=
+      enter-to-class
+      enter-active-class
+
+      leave-class
+      leave-to-class
+      leave-active-class
+      例子：
+      <button v-on:click='show=!show'>切换<button>
+      <transition enter-active-class='animated bounce' leave-active-class='animated bounce'>
+          <div v-show='show'>
+            <p>动画</p>
+          </div>
+      </transition>//transition必须写，渲染后不存在
+      data:{
+        show:true
+      }
+
+  2. 使用JS技术实现
+    使用事件钩子实现动画
+    1) jquery
+      <transition
+        @enter='enter'
+      >
+        <div v-if='show'>
+          hello
+        </div>
+      </transition>
+
+      事件钩子：
+      beforeEnter
+      enter
+      afterEnter
+
+      beforeLeave
+      leave
+      afterLeave
+
+      enter:function(el,done){
+        $(el).animate({},{})
+
+        //velocity
+        Velocity(el,{},{})
+        //velocity.ui
+        Velocity(el,'',{})
+      }
+    例子：
+        <button @click='show=!show'>切换<button>
+        <transition @enter='enter' @leave='leave'>
+          <div v-show='show'>
+            <p>动画</p>
+          </div>
+      </transition>//transition必须写，渲染后不存在
+      methods:{
+        //js-animate
+            enter:function(el,done){
+              $(el).animate({
+                opacity:0
+              },{
+                duration:1000,
+                complete:done
+              })
+            };
+            leave:function(el，done){
+              $(el).animate({
+                opacity:1
+              },{
+                duration:1000,
+                complete：done
+              })
+            };
+        //animate-velocity
+        enter:function(el,done){
+          Velocity(el,'callout.bounce',{
+            duration:1000,
+            complete:done
+          })
+        },
+        leave:function(el,done){
+          Velocity(el,'callout.bounce',{
+            opacity:1000,
+            complete:done
+          })
+        }
+        
+      }
+  3. 多个元素的过度效果
+    <transition-group tag='ul' @enter='' @leave=''>
+      //transition-group默认为<span>,但可用tag更换为其他元素，内部元素需提供唯一的key属性
+      <li v-for='name in names' :key='name'>{{name}}</li>
+    </transition-group>
+
+------------------------------------------------------------------------------------
+组件（component）,可以扩充HTML元素，封装可重用代码
+1. 自定义组件
+  1) 全局定义
+    Vue.component('my-btn',{
+      //选项 与Vue({})的参数选项基本一致，data为函数
+      template:`<div>子组件模板</div>`,
+      data:function(){
+        return {
+
+        }
+      }
+      methods:
+      computed:
+    })
+    new Vue({
+      el:'#app'
+    });
+
+  2) 局部定义
+    new Vue({
+      el:'#app'
+      data:{},
+      methods:{},
+      components:{
+        'my-btn':{
+          //选项 与Vue({})的参数选项基本一致
+          template:`<div>子组件模板</div>`,
+          data:function(){
+            return {
+
+            }
+          }
+          methods:
+          computed:
+        }
+      }
+    })
+
+    组件应用
+    1) 使用标签
+      <div id="app">
+        <my-btn></my-btn>
+      </div>
+    2) 使用is属性
+    //打破<ul>,<table>,<select>等元素里允许包含元素的限制
+      <div id="app">
+        <span is='my-btn'></span>        
+      </div>
+
+2. 组件之间的通信
+  1) 父组件->子组件（子组件访问父组件的数据）
+    props 特性来实现+属性绑定，声明它预期的数据//不区分大小写
+    //props是单项数据绑定，当父组件的属性变化时，传到给组件，反之不能
+    <div id="app">
+      <my-section :a='msg'></my-section>      
+    </div>
+
+    new Vue({
+      el:'#app',
+      data:{
+        msg:'hello parent...'
+      },
+      components:{
+        'my-section':{
+          template:'<h2>{{a}}</h2><p>{{b}}</p>',//模板
+          props:['a'],
+          data:function(){
+            return {
+              b:'hello son...'
+            }
+          }
+        }
+      }
+    })
+
+  2) 子组件->父组件（子组件将状态反馈给父组件）
+    自定义事件
+    子组件使用自定义事件系统与父组件通信
+    子组件
+      'my-son':{
+        methods:{
+          handler:function(){
+            this.$emit('call')//向父组件发射事件
+          }
+      }
+    父组件
+      <div id="app">
+        <my-son @call='handler'></my-son>
+      </div>
+
+  3) 模板的传递
+    Vue.component('my-header',{
+      template:`
+        <header class="header">
+          <slot></slot>
+          <slot name='bottom'></slot>
+        </header>
+      `
+    })
+
+    <my-header>
+      <h1 slot='bottom'>hello</h1>
+      <h2>学生信息管理系统</h2>
+      <p>该系统正在调试过程中</p>
+    </my-header>
+    <my-content></my-content>
+    <my-footer></my-footer>
+
+
+    <my-header>
+      <h2>课调系统</h2>
+      <p>该系统正在调试过程中</p>
+    </my-header>
+    <my-content></my-content>
+    <my-footer></my-footer>
+
+  4) 作用域slot
+    用于某一个组件显示不同的信息（ul(通用)>li(定制)）
+
+    Vue.component('my-list',{
+      props:['list'],
+      template:`
+        <table>
+          <thead>
+            <!--普通插槽-->
+            <slot name='header'></slot>
+          </thead>
+          <tbody>
+            <!--作用域插槽-->
+            <slot name='content' v-for='item in list' :text='item'></slot>
+          </tbody>
+        </table>
+      `
+    });
+
+    <my-list :list='students'>
+      <tr slot='header'>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+      <template slot-scope='prop' slot='content'>//必须存在，他是作用域插槽的模板，
+          //prop接受从子组件传递过来的Prop对象
+         <tr>
+          <td>{{prop.text.name}}</td>
+          <td>{{prop.text.age}}</td>
+          <td>{{prop.text.gender}}</td>
+        </tr>
+      </template>
+     
+    </my-list>
+
+3. 动态组件
+保留<component>元素，动态的绑定到is属性
+  new Vue({
+    el:'#app',
+    data:{
+      current:'my-one'
+    },
+    components:{
+      'my-one':{}
+      'my-two':{}
+      'my-three':{}
+    }
+  })
+  <div id="app">
+    <component :is='current'></component>
+  </div>
+
+4. 自定义指令
+  对底层dom编程
+  0.全局定义
+    vue.directive(directivename,options)
+  1. 局部注册
+  new Vue({
+    directives:{//自定义指令
+      'test':{
+        bind:function(el,binding){
+
+        }
+      }
+    }
+  });
+
+  <div v-test='msg'></div>
+5.过滤器
+过滤器可以用在两个地方：mustach插值和v-bind 表达式，添加在js表达式的尾部，由管道符指示
+  new Vue({
+    filters:{
+      upper:function(data){
+        return msg.toUpperCase();
+      }
+    }
+  })
+
+  {{msg | upper}}
+  <div v-bind:'msg | upper'></div>
+
+6. 插件的应用
+  1) 通过script先后导入vue以及一起插件，插件会自动与vue集合
+
+    <script src='js/vue.js'></script>
+    <script src='js/vue-router.js'></script>
+
+    <script>
+      var app = new Vue({
+
+      });
+      app.$router
+    </script>
+
+  2) 通过npm
+    npm install vue --save
+    npm install vue-router --save
+
+    const Vue = require('vue');
+    const VueRouter = require('vue-router');
+    Vue.use(VueRouter);
+---------------------------------------------
+vue生态体系
+  vue-router  路由管理
+  axios       ajax(jQuery,选择器，ajax，动画)
+  vuex        数据状态管理
+                （删除->）
+              动作-数据突变
+  element-ui  饿了么组件库（网页版）
+  mint-ui     （手机版）
+
+  开发工具
+    vue-cli
+    webpack
+    bebel
+
+
+0.安装
+    通过script导入，先后导入vue以及vue-router，会自动安装
+   <script src=”js/vue.js"></script> 
+   <script src=”js/vue-router.js"></script>
+1. vue-router
+  具有路由的网页（单页面应用程序）
+    http://localhost:8080/index.html
+
+    index.html
+      index.css
+      index.js( component)
+
+    学生管理  Student
+    教师管理  Teacher
+    课程管理  Course
+
+    1) 编写路由组件
+      var Student = {
+        template:``,
+        data:function(){
+
+        }
+      }
+      var Course = {
+        template:``,
+        data:function(){
+
+        }
+      }
+
+    2) 创建路由对象
+      var router = new VueRouter({
+        routes:[{
+          path:'/student',
+          component:Student，
+          children:[{//子页面路由
+            path:'/info',
+            component:studentinfo
+          },{..}]
+        },{
+          path:'/course',
+          component:Course
+        }]
+      });
+    3) 路由的应用
+      new Vue({
+        router:router
+      });
+
+    <router-link to="/student">学生管理</router-link>默认渲染成<a href="#/student"></a>
+  //路由出口，路由匹配到组件将渲染在这里
+    <router-view></router-view>
+    
+

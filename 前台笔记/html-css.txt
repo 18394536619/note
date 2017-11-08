@@ -1,0 +1,145 @@
+html分为两部分：标签，表单
+    HTML文档结构：<!DOCTYPE>,<html>,<head><body>
+    head子系列：<title>,<meta>,<link>,<style>,<script>
+    body子系列：
+        H系列：h1,h2,h3,h4,h5,h6
+        表格系列：table.thead,tbody,tfoot,caption,th,tr,td
+        列表系列：ul,li,ol,dl,dt,dd
+        强调：strong,b,em,u,i,
+        闲散：p,div,img,a,span,br,hr
+        form系列：textarea,optgroup,select,option,lable,button,input,fieldset,form
+        新增元素：header,article,section,footer,address,nav,aside,figure,details,summary.
+        新增form元素：progress,output,meter,datalist,(input属性),form,formaction,formmethods,formtarge,
+        autofocus,capture,list,max,min,placeholder,pattern,required
+
+    行内元素：span,b,i,em,u,strong,img,a,textarea,select,option,button,input,address,td
+    块级元素：h1-h6,html,body,table,thead,tbody,tfoot,caption,th,tr,ul,ol,li,dl,dt,dd,p,div,img,
+            fieldset,form,header,article,section,footer,nav,aside,figure,details,summary
+    无意义标签：<div>,<span>
+    <a>标签的伪类书写顺序：link(未访问),visited(已访问),hover(鼠标悬浮),active(选定)
+    四种设置css样式的优先级： 行内>内部样式>外部样式>!important.
+    布尔值属性：disabled,required,autofocus,checked,open,select,readonly,
+1.浏览器的兼容器问题：指因为不同的浏览器对不同的代码有不同的解析，造成页面显示效果不一。
+2.主要的浏览器兼容问题有以下几种
+    1）元素有默认的内外边距，而不同的浏览器的内外边距的默认值也不同。
+        解决方法：*{margin:0; padding:0;}
+    2)给元素浮动，并设置了margin的情况下，IE6显示的margin值会变大，
+        解决办法：给该元素display:inline
+    3)浏览器放大缩小，布局错乱
+        解决方法：
+        a.把元素的宽高给定
+        b.响应式布局：实现方式百分之百自适应布局，一种方法是原生代码实现，使用媒体查询
+            对应PC端界面：media screen and (min-width:1000px)
+            对应平板页面：media screen and (max-width:1000px)and(min-width:768px)
+            对应手机端页面：media screen and (max-width:768px)
+          另一种方法是使用bootstrap框架，也就是栅格布局，也就是将整个屏幕分为24列：
+            col-md-数字：在PC端显示在一行占几列
+            col-sm-数字：在平板显示一行占几列
+            col-xs-数字：在手机端显示一行占几列
+    4)给标签设置的宽高较小（一般小于等于10px）时，在IE6和IE7中显示时会高于自己设置的高度；
+        解决办法是：给标签设置overflow:hidden,即将超出部分隐藏。
+3.CSShack技巧，同样是为了解决浏览器兼容性问题：
+    1）例如：css中给一个元素设定以下样式：
+        {
+            height:300px;
+            *height:200px;
+            _height:100px;
+        }
+    在以上样式中，由于IE6可以解析_和*，所以前边的两个高度被覆盖，元素最终的高度为100px，而IE7和遨游可以解析*,但不能解析_，所以
+    最终高度是200px；其余的浏览器_和*都不能解析，所以最终的高度是300px；
+    2）！important
+       !important作用是提高指定样式规则的应用优先权。IE7以及所有标准浏览器能识别!important。用于区别IE6与IE7以及其他浏览器
+4.meidia queries (媒体查询)在手机屏幕上的CSS写法
+    答案 ：CSS的媒体查询模块允许在不改变代码的前提下对显示效果进行调整
+        1.设置meta
+            <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+            width=device-width:宽度等于当前设备的宽度
+            initial-scale:初始的缩放比例（默认设置为1.0）
+            minimum-scale:允许用户缩小的最小比例（默认设置为1.0）
+            maximum-scale:允许用户放大的最大比例（默认设置为1.0）
+            user-scalable:用户是否可以手动缩放（默认为no，应为我们不希望用户放大缩小页面）
+        2.解决兼容性问题（IE）
+        3.对应编写css3和media代码
+            1.<link rel="stylesheet" media="(max-width:600px)" herf="index.css">
+            2.<style>
+                @media(max-width:600px){
+                    /*css样式*/
+                    .header{
+                        display:none
+                    }
+                }  
+              </style>
+5.异步加载JS的方法
+    答：默认情况下javascript是同步加载的，也就是如果javascript加载时阻塞，后面的元素要等到javascript加载完成后才能进行加载。
+    对于一些意义不是很大的javascript，如果放在页头会导致加载很慢，影响用户体验。
+    异步加载的方式：
+        1.defer只支持IE
+          defer属性规定是否对脚本执行进行延迟，知道页面加载完为止
+          <script type="text/javascript" defer="defer"></script>
+        2.async：html5新增标签
+          <script type="text/javascript" async="async" src=".js"></script>
+        3.创建script插入到DOM中，加载完毕后callBack:
+          function loadScript(url,callBack){
+              var script=document.createElement("script")
+              script.type="text/javascript";
+              if(script.readySate){//IE
+                script.onreadystatechange=function(){
+                    if(script.readySate=="loaded"||script.readySate=="complete"){
+                        script.onreadystatechange=null;
+                        callback()
+                    }
+                }；
+              }else{
+                  //Other:firefox,safari,chrome,opera
+                  script.onload=function(){
+                      callback();
+                  };
+              }
+              script.src=url;
+              document.body.appendchild(script)
+          }
+6.性能优化的方法：
+    1.尽量减少HTTP请求
+    2.使用内容发布网络（CDN的使用）
+    3.添加Expire头
+    4.压缩组件（使用Gzip方式）
+    5.将CSS样式放到顶部
+    6.将javascript脚本放在底部
+    7.避免使用CSS表达式
+    8.使用外部javascript和CSS内联
+    9.减少DNS查询
+    10.精简javascript
+    11.避免重定向
+    12.删除重复脚本
+    13.配置Etag
+    14.使Ajax可缓存
+7.HTML5和CSS在实际项目中应用了那些特性
+    答：HTML5：在页面重构时应用到了很多语义化的新标签，比如：header,article,aside,nav,section,figure,address,footer
+    在很多情况下，当我们不知道使用什么标签时，可以使用div和span两个无意义标签；此外子页面中应用较多的还有form表单（主要是登录注册页面），
+    table表格（主要用于显示数据）。
+    CSS3：首先在全局布局时，采用居中样式使页面实现响应式布局，不会根据浏览器分辨率的改变而布局混乱，在编写样式时，CSS3提供了更多的选择器
+    是更加的方便。还有有关盒子模型，边框圆角，阴影，背景图片，以及动画的知识，是页面更加美观。
+8.请写出表格边框合并的两种方式;
+    答：HTML里：<table cellspacing="0">
+        CSS里：border-collapse:collapse
+        前者，边框距离为0，但任然是两个边框，后者共享边框，是一个边框。
+9.请写出至少五种解决父子级之间外边框合并问题
+    1.父级使用border,子级使用border或background。
+    2.父级和子级使用border,或background，父级使用padding,父级宽高重新设置。
+    3.使用相对定位
+    4.子级使用绝对定位，父级使用相对定位配合使用
+    5.子级dispaly:inline-block，然后margin
+    6.父元素overflow:hidden,然后子集元素margin
+    7.子元素浮动，然后margin
+    8.父元素浮动，子元素margin
+    9.父子元素都浮动，子元素margin
+10.列举绝对定位，相对定位，固定定位的方式及特点：
+    绝对定位：absolute,相对定位：relative
+        绝对定位脱离文本流，不保留元素定位前的空间
+        给目标元素给定绝对定位，如果不给父级元素相对定位，那么，目标元素默认跟着浏览器左上角移动，
+        当给目标元素父级元素相对定位，目标元素就跟着父级元素左上角移动。
+    相对定位：不脱离文档流，保留定位前的空间，相对于元素定位前的位置移动
+    固定定位：特点和绝对定位相似，固定定位元素相对于浏览器视口，不会随着滚定条的滚动而滚动。
+11.请写出通过CSS属性隐藏元素的两种方法及特点：
+    display:none 不占据空间
+    visibility:hidden 占据空间

@@ -1,0 +1,149 @@
+//安装
+1.通过script直接导入
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+2.使用npm
+    $ npm install axios --save
+3.
+    <script src="../../js/axios.min.js"></script>
+    <script src="../../js/vue.min.js"></script>
+
+axios总结
+  Axios是基于promise的HTTP库，可以用在浏览器和node.js 中。
+  特点：
+    Promise机制
+    从浏览器中创建XMLHttpRequests
+    从node.js中创建http请求
+    不仅可以使用在浏览器中还能用在node中
+    支持promise API 
+    拦截请求和响应
+    转换请求和响应数据
+    取消请求
+    自动转换json 数据
+创建实例
+axios.create({
+  baseURL:'http://127.0.0.1:3000/',
+  url:'/student/findAll',
+  method:'',
+  params:'',  //get参数
+  data:''     //post  默认序列化为json
+  headers:{
+    'content-type':'application;json;charset=utf-8'
+  },
+  responseType:''
+})
+
+1. get请求
+  axios.get(url[,config])
+  axios.get(url,{
+    params:''
+  }).then(resolve).catch(reject)
+2. post请求
+  1) data序列化为json
+  axios.post(url,data).then(resolve).catch(reject)
+  2) data序列化为表单格式
+  axios.post(url,qs.stringify(data),{
+    headers:{
+      'content-type':'application/x-www-form-uri'
+    }
+  }).then(function(result){
+    result.data
+
+  }).catch(reject)
+
+拦截器
+  在发送请求之前进行拦截
+  axios.interceptors.request.use(function(config){//发送之前做什么
+    //对config进行修改
+    return config;
+  }，function(error){
+      //请求错误做什么
+      return Promise.reject(error)
+  });
+
+  在收到响应之前进行拦截
+  axios.interceptors.response.use(function(config){
+    //对config进行修改
+    return config;
+  },function(error){
+      return Promise.reject(error)
+  });
+
+-----------------------详解-----------------------------
+创建实例
+    //axios即可在浏览器中用，又可在node.js中应用，自动转换成JSON格式
+    var ajax=axios.create({
+        baseURL:'http://127.0.0.1:3000',//基路劲，将自加到url前边
+        methods:'GET',//请求方式
+        params:vm.form//参数，将被添加到URL上，post提交中为data，作为请求主体被发送的数据。
+    });
+    调用axios实例的方法，返回promise对象
+        ajax.get('/users/save').then(function(data){
+            console.log(data);
+        }).catch(function(error){
+            console.log(error);
+        });
+1.get 方式的简写
+        axios.get('http://127.0.0.1:3000/users/save',{
+            params:vm.form
+        }).then(function(data){
+            console.log(data);//请求成功处理函数
+        }).catch(function(error){
+            console.log(error);//请求失败处理函数
+        });
+2.1.post提交方式的简写,默认格式为JSON，与jquery不同
+        axios.post('http://127.0.0.1:3000/users/save',vm.form)
+        .then(function(data){
+            console.log(data);
+        }).catch(function(error){
+            console.log(error);
+        });
+2.2.post方式，默认为数据表单编码，vm.form需要进行转码操作，qs.stringify()
+        //添加请求拦截器
+        axios.interceptors.request.use(function(config){//在发送请求前做什么
+            //对config进行处理
+            axios.defaults.baseURL='http://127.0.0.1:3000';//设定默认值
+                ////axios.post('/users/save',qs.stringify(vm.form),{}
+            axios.post('/users/save',vm.form,{
+                header:{//自定义请求头
+                    'content-type':'application/x-www-form-urlencoded;charset=UTF-8'
+                }
+            }).then(function(data){
+                console.log(data);
+            }).catch(function(error){
+                console.log(error);
+            });
+        });
+应用
+    new Vue({
+        el:'#app',
+        data:{},
+        methods:{
+            hander:function(){
+                var vm=this;
+                ........
+            }
+        }
+    })；
+//常见变量
+    1.url：'/user'   //用于请求服务器的URL
+    2.method:'get'  //请求方式
+    3.baseURL:'http://..'   //基路劲
+    4.params:{}     //参数
+    5.data:{}       //作为请求主体被发送的数据，适用于post,put,patch
+    6.responseType:'json'   //表示服务器相应的数据类型
+    7.header:{}      //自定义请求头
+//返回值对象结构
+    {
+        data:{} //后台发送的数据
+        status:200  //状态码
+        statusText:'ok' //状态信息
+        headers:{}  //服务器头部信息
+        config:{}   //axios对request的配置
+        request:{}  //request对象
+    }
+//默认值
+    axios.default.timeout = 1000
+    axios.defaults.baseURL = 'http://localhost:8080'; 
+    axios.defaults.headers.post['Content-type'] = 'application/x-www-formurlencoded;charset=UTF-8'
+
+

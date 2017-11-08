@@ -1,0 +1,139 @@
+//安装
+    1.通过<script>直接导入
+        <script src="https://unpkg.com/jquery"></script>
+    2.使用npm
+        $ npm install jquery --save
+    3.
+        <script src="../../js/jquery-3.0.0.min.js"></script>
+        <script src="../../js/vue.min.js"></script>
+jquery.ajax
+用于执行一个异步的ajax请求
+    1.以get方式将form提交到后台
+    var vm=this
+    $.ajax({
+        url:'http://127.0.0.1:3000/users/save', //发送请求的地址
+        type:'GET',//提交方式，method的别名，默认为get
+        //async:'true',//默认为true，是否异步请求，可以不写
+        data:vm.form,   //发送到服务器的数据，默认为form表单格式，
+        success:function(data){//请求成功后的回调函数，三个参数data,textStatus, jqXHR
+            console.log(data);
+            },
+        error:function(a,b){//请求失败后的回调函数，三个参数data,textStatus, jqXHR
+            console.log(a);
+            console.log(b);
+            }，
+        //complete(jqXHR, textStatus )请求完成后的回调函数，success,error之后均调用
+    });
+
+//后台代码：
+
+    //获取get方式的请求，http://127.0.0.1:3000/users/save
+        router.get('/save', function(req, res, next) {
+        //获取数据
+        var result=req.query;
+        console.log("get..",result);
+        //给出回应
+        res.send(result);
+        });
+-------------------------------------------------------------------------------------------------
+    2.以post方式将form提交到后台
+        $.ajax({
+            url:'http://127.0.0.1:3000/users/save',
+            type:'POST',
+            data:vm.form,
+            tranditional:true,  //使用传统的方式序列化，配合表单编码使用，传递的数据中
+                                含数组时最好写上
+            success:function(data){
+                console.log(data);
+                    },
+            error:function(a,b){
+                console.log(a);
+                console.log(b);
+                }
+        });
+    3.以post方式将form数据发送到后台（json编码）
+        $.ajax({
+            url:'http://127.0.0.1:3000/users/save',
+            type:'POST',
+            data:JSON.stringify(vm.form),
+            contentType:'application/json',
+                    //默认为'application/x-www-form-urlencoded; charset=UTF-8'
+            success:function(data){
+                console.log(data);
+                },
+            error:function(a,b){
+                console.log(a);
+                console.log(b);
+                }
+        });
+后台代码
+    //获取post方式的请求，http://127.0.0.1:3000/users/save
+        router.post('/save', function(req, res, next) {
+        //获取数据
+        console.log(req.body);
+        var result=req.body;
+        console.log("post...",result);
+        //给出回应
+        res.send(result);
+        });
+-------------------------------------------------------------------------------------------------------
+    4.jsonp本质上不属于ajax,用于解决跨域问题，必须是get请求方式
+        $.ajax({
+            url:'http://127.0.0.1:3000/users/save',
+            type:'GET',
+            dataType:'jsonp',//从服务器返回期望的数据类型(json,jsonp,text,xml,html,script)
+            //jsonp:'callback'//在JSONP请求中重写回调函数的名字，默认值为callback,可改为其他值，后台发生相应变化，一般不写，不做修改
+            data:vm.form,
+            success:function(data){
+                console.log(data);
+                },
+            error:function(a,b){
+                console.log(a);
+                console.log(b);
+                }
+        });
+后台代码：
+        //获取jsonp方式的请求，http；//127.0.0.1:3000/users/save
+            router.get('/jsonp', function(req, res, next) {
+            //获取数据
+            var param=req.query;
+            console.log(param);
+            var callback=param.callback;
+            var data="你好，这是后台数据";
+            res.send(callback+'("'+data+'")');
+            });
+-------------------------------------------------------------------------------------------------------
+    其他方法
+        //Jquery的其他ajax方法
+        $.ajaxSetup({
+            type:'POST',
+            contentType:'application/json',
+            error:error:function(a,b){
+                console.log(a);
+                console.log(b);
+                }
+        });
+        A.  get方法提交
+        $.ajax({
+            url:'http://127.0.0.1:3000/users/save'
+            data:JSON.stringify(vm.form),
+            success:success:function(data){
+                console.log(data);
+                }
+        });
+        B.  post提交
+            //ajaxSetup不用写type:post,如果没有ajaxSetup则必须在下列式子中添加dataType的值
+            $.post('http://127.0.0.1:3000/users/save',JSON.stringify(vm.form),function(data){
+                            console.log(data);
+            );
+应用：
+    new Vue({
+        el:'#app',
+        data:{}
+        methods:{
+            handler:function(){
+                var vm=this;
+                .....
+            }
+        }
+    })

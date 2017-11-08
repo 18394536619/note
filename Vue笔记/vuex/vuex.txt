@@ -1,0 +1,99 @@
+1. vuex
+  是Vue.js应用程序开发的状态管理机制，采用集中式存储管理，
+  vuex的出现是为了将数据以及与数据相关的操作抽离出来，进行统一管理
+//每个应用只包含一个store实例
+  var store = new Vuex.Store({
+    state:{//用于保存数据
+      students:[],
+      courses:[]
+    },
+    getters:{//可看做是store的计算属性，第一个参数为state，过滤state中的数据
+      girls:function(state){
+        return state.students.filter()
+      }
+    },
+    mutations:{//突变，用于修改state的值，同步操作
+      updateStudent:function(state,data){
+        state.students = data;
+      }
+    },
+    actions:{//动作，用于调用突变执行数据的改变,接受与store相同属性.方法的context
+        //可调用context.commit提交mutation,或通过context.state和context.getters获取state,getters
+      findAllStudent:function(context){
+        axios.get('/student/findAll').then(function({data}){
+          //执行突变
+           //获取所有学生的信息，调用突变，将学生信息更新到state中
+          context.commit('updateStudent',data)//提交突变
+        })
+      },
+      batchDelete:function(context){
+        axios.post('/student/batchDelete',ids).then(function(){
+          //分发动作
+          context.dispatch('findAllStudent')
+        })
+      }
+    }
+
+  })
+
+  vuex与vue的结合使用
+  new Vue({
+    el:'',
+    store:store,
+    created:function(){
+      this.findAllStudent();
+    }
+    computed:{
+      //state,getter映射
+      //...Vuex.mapState(['students','course'])
+      ...Vuex.mapState({
+        'stus':'students',
+        'cours':'courses'
+      })
+      ...Vuex.mapGetters(['girls'])
+    },
+    methods:{
+      ...Vuex.mapMutations(['updateStudent'])
+      ...Vuex.mapActions(['findAllStudent','batchDelete'])
+    }
+  })
+
+  <ul>
+    <li v-for='s in stus'></li>
+  </ul>
+  <button @click='updateStudent'></button>
+
+---------------------详解;--------------------------------------
+  1.//mapGetters辅助函数
+    mapGetters辅助函数是将store中的getter映射到局部计算属性
+  ...Vuex.mapGetters(['girls']),
+  等价与：
+    girls:function(){
+      return this.$store.getters.girls;
+    }
+  2.//mapState辅助函数生成计算属性
+    ...Vuex.mapState(['students','courses'])
+    等价于：
+    ...Vuex.mapState({'students':'students','courses':'courses'})
+    等价于：
+    ...Vuex.mapState({
+      students:function(state){
+          return state.students
+      }
+      courses:function(state){
+        return state.courses
+      }
+    })
+  3.//mapMutations
+    将组件中的methods映射为store.commit调用
+    ...Vuex.mapMutations(['updateStudent'])
+    等价于
+    ...Vuex.mapMutations({
+      update:'updateStudent'
+    })
+  4.//mapActions将组件映射为store.dispatch调用
+    ...Vuex.mapActions(['findAllStudent','batchDelete'])
+
+
+
+

@@ -1,0 +1,41 @@
+require('babel-polyfill');//解决兼容问题
+ var peopleDB=require('./peopleDB');
+ var People=require('../model/People');
+
+ //测试所有查找
+ peopleDB.findAll().then(function(data){
+     console.log(data);
+ }).catch(function(error){
+     console.log("报错了",error);
+ });
+
+//测试findbyid
+ peopleDB.findById(1).then(function(result){
+     console.log(result);
+ }).catch(function(error){
+     console.log("报错了",error);
+ });
+
+ //测试保存
+ var people=new People(null,'韩二',171008);//调用model
+ peopleDB.save(people).then(function(result){
+     console.log(result);
+ }).catch(function(error){
+     console.log("报错了",error);
+ });
+
+ //测试修改
+ var people=new People(3,'李四',170105);
+ peopleDB.update(people).then(function(result){
+     console.log(result);
+ }).catch(function(error){
+     console.log("报错了",error);
+ });
+
+ //删除
+let ids=[3];//存放要删除的号
+peopleDB.batchDelete(ids).then(function(result){
+    console.log(result);
+}).catch(function(error){
+    console.log("报错了",error);
+});
